@@ -1,0 +1,12 @@
+language: scala
+jdk: oraclejdk8
+cache:
+  directories:
+  - $HOME/.ivy2/cache
+  - $HOME/.sbt/launchers
+script:
+- git config core.whitespace tab-in-indent,trailing-space,blank-at-eol && git show --oneline --check
+- sbt test scripted
+- find $HOME/.sbt -name "*.lock" | xargs rm
+- find $HOME/.ivy2 -name "ivydata-*.properties" | xargs rm
+sudo: false
