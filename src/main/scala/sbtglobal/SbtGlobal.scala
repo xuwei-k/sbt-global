@@ -46,6 +46,8 @@ object SbtGlobal extends AutoPlugin {
     )
   }
 
+  private[this] val pluginSuffix = "Plugin"
+
   def addGlobalPlugin(moduleId: String, taskName: String): Seq[Def.Setting[_]] = {
     val removeCommand = "removeTemporary" + taskName
 
@@ -57,7 +59,7 @@ object SbtGlobal extends AutoPlugin {
         val f = tempPluginDotSbtFile((baseDirectory in LocalRootProject).value)
         IO.delete(f)
       },
-      commands += Command.command(taskName + "Plugin") { state =>
+      commands += Command.command(taskName + pluginSuffix) { state =>
         val extracted = Project.extract(state)
         val f = tempPluginDotSbtFile(extracted.get(baseDirectory in LocalRootProject))
         IO.write(f, "addSbtPlugin(" + moduleId + ")")
@@ -92,6 +94,8 @@ object SbtGlobal extends AutoPlugin {
 
   private[this] def changed(base: File, files: Map[File, Seq[Byte]]): Boolean =
     getBuildFiles(base) != files
+
+  private[this] val dependencyUpdates = "dependencyUpdates"
 
   override val projectSettings = Seq[Def.SettingsDefinition](
     sbtglobalBuildFiles := sbtglobalBuildFiles.?.value.getOrElse(getBuildFiles((baseDirectory in ThisBuild).value)),
@@ -175,7 +179,20 @@ object SbtGlobal extends AutoPlugin {
     },
     addGlobalPlugin(""" "com.gilt" % "sbt-dependency-graph-sugar" % "0.8.2" """, "dependencySvgView"),
     addGlobalPlugin(""" "com.dwijnand.sbtprojectgraph" % "sbt-project-graph" % "0.1.0" """, "projectsGraphDot"),
-    addGlobalPlugin(""" "com.timushev.sbt" % "sbt-updates" % "0.3.0" """, "dependencyUpdates"),
+    addGlobalPlugin(""" "com.timushev.sbt" % "sbt-updates" % "0.3.0" """, dependencyUpdates),
+    commands ++= {
+      val dependencyUpdatesPlugin = dependencyUpdates + pluginSuffix
+      val dependencyUpdatesPluginPlugins = dependencyUpdatesPlugin + "Plugins"
+
+      Seq(
+        Command.command(dependencyUpdatesPluginPlugins) { state =>
+          "reload plugins" :: dependencyUpdatesPlugin :: "reload return" :: state
+        },
+        Command.command(dependencyUpdatesPlugin + "All") { state =>
+          dependencyUpdatesPlugin :: dependencyUpdatesPluginPlugins :: state
+        }
+      )
+    },
     inConfig(Test) {
       // workaround sbt 0.13.13 bug
       // https://github.com/sbt/sbt/issues/2822
