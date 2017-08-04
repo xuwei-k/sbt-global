@@ -21,7 +21,7 @@ object SbtGlobal extends AutoPlugin {
     import sbt.complete.DefaultParsers._
     val list = List(
       "add", "branch", "checkout", "cherry-pick", "commit", "diff",
-      "fetch", "gc", "grep", "grep", "help", "init", "log", "mv",
+      "fetch", "gc", "grep", "help", "init", "log", "mv",
       "pull", "rebase", "reflog", "rm", "status", "tag"
     ).map(token(_)).reduceLeft(_ | _)
 
