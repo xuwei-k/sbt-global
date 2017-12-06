@@ -141,7 +141,7 @@ object SbtGlobal extends AutoPlugin {
       else Nil
     },
     scalacOptions := {
-      if (name.value == "ivy-console") Seq("-deprecation", "-language:_", "-unchecked", "-Xlint")
+      if (name.value == "ivy-console") Seq("-deprecation", "-language:_", "-unchecked")
       else scalacOptions.value
     },
     validatePom := makePom.?.value.map { f =>
