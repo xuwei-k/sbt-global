@@ -7,5 +7,5 @@ My sbt global settings.
 `~/.sbt/0.13/plugins/plugins.sbt`
 
 ```scala
-addSbtPlugin("com.github.xuwei-k" % "sbt-global" % "0.1.1")
+addSbtPlugin("com.github.xuwei-k" % "sbt-global" % "0.1.2")
 ```
