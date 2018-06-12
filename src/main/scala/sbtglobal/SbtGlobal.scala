@@ -13,7 +13,7 @@ object SbtGlobal extends AutoPlugin {
   val jarSize = TaskKey[Long]("jarSize")
 
   private[this] def getBuildFiles (base: File) =
-    ((base * "*.sbt") +++ ((base / "project") ** ("*.scala" | "*.sbt"))).get.map {
+    ((base * "*.sbt") +++ ((base / "project") ** ("*.scala" | "*.sbt"))).filter(_.isFile).get.map {
       f => f -> collection.mutable.WrappedArray.make[Byte](Hash(f))
     }.toMap
 
