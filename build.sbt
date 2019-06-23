@@ -74,10 +74,15 @@ updateReadme := {
   }.mkString("", "\n", "\n")
   IO.write(readmeFile, newReadme)
   val git = new Git((baseDirectory in LocalRootProject).value)
-  val log = streams.value.log
+  val log = new scala.sys.process.ProcessLogger {
+    private[this] val l = state.value.log
+    def buffer[T](f: => T): T = f
+    def err(s: => String): Unit = l.error(s)
+    def out(s: => String): Unit = l.info(s)
+  }
   git.add(readme) ! log
-  git.commit(message = "update " + readme, sign = false) ! log
-  "git diff HEAD^" ! log
+  git.commit(message = "update " + readme, sign = false, signOff = false) ! log
+  sys.process.Process("git diff HEAD^") ! log
   readmeFile
 }
 
