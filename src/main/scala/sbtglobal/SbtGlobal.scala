@@ -179,7 +179,7 @@ object SbtGlobal extends AutoPlugin {
     },
     addGlobalPlugin(""" "com.gilt" % "sbt-dependency-graph-sugar" % "0.8.2" """, "dependencySvgView"),
     addGlobalPlugin(""" "com.dwijnand.sbtprojectgraph" % "sbt-project-graph" % "0.1.0" """, "projectsGraphDot"),
-    addGlobalPlugin(""" "com.timushev.sbt" % "sbt-updates" % "0.3.3" """, dependencyUpdates),
+    addGlobalPlugin(""" "com.timushev.sbt" % "sbt-updates" % "0.4.1" """, dependencyUpdates),
     commands ++= {
       val dependencyUpdatesPlugin = dependencyUpdates + pluginSuffix
       val dependencyUpdatesPluginPlugins = dependencyUpdatesPlugin + "Plugins"
